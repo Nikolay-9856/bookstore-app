@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Аренды{% endblock %}
+{% block content %}
+<div class="head"><h1>Аренды и напоминания</h1>
+<form method="post" action="{{ url_for('admin_run_reminders') }}"><button class="btn">Проверить сроки сейчас</button></form></div>
+<p class="muted">Фоновая задача проверяет сроки автоматически каждые {{ config.REMINDER_INTERVAL // 60 }} мин. и напоминает за {{ config.REMIND_DAYS_BEFORE }} дн. до окончания аренды.</p>
+<table class="tbl"><tr><th>Читатель</th><th>Книга</th><th>Срок</th><th>До</th><th>Состояние</th><th>Напоминания</th></tr>
+{% for r in rows %}
+<tr><td>{{ r.username }}<br><small>{{ r.email }}</small></td><td>{{ r.title }}</td><td>{{ RENT_PLANS[r.days][0] }}</td><td>{{ r.ends_at[:16] }}</td>
+<td>{% if r.returned %}возвращена{% elif r.ends_at < now %}<b class="red">просрочена</b>{% else %}активна{% endif %}</td>
+<td>{{ '✓ скоро' if r.reminded_soon }} {{ '✓ просрочка' if r.reminded_overdue }}</td></tr>
+{% else %}<tr><td colspan="6">Аренд нет</td></tr>{% endfor %}
+</table>
+<h3>Последние отправленные уведомления</h3>
+{% for n in log %}<div class="note box"><small>{{ n.created_at[:16] }} → {{ n.username }}</small><div>{{ n.text }}</div></div>{% else %}<p class="muted">Пока не было.</p>{% endfor %}
+{% endblock %}

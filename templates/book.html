@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{{ b.title }}{% endblock %}
+{% block content %}
+<div class="box bookpage">
+  <div class="cover big c{{ b.id % 6 }}">{{ b.title[:1] }}</div>
+  <div>
+    <div class="cat">{{ b.category }} · {{ b.year }} г.</div>
+    <h1>{{ b.title }}</h1><h3>{{ b.author }}</h3>
+    <p>{{ b.annotation }}</p>
+    <p><span class="st st-{{ b.status }}">{{ STATUSES[b.status] }}</span> Экземпляров: {{ b.stock }}</p>
+    {% if owned %}
+      <div class="flash">Книга в вашей библиотеке{% if owned.kind=='rent' %} — аренда до {{ owned.ends_at[:10] }}{% endif %}.</div>
+    {% elif is_available(b) %}
+      {% if g.user %}
+      <form method="post" action="{{ url_for('order', book_id=b.id) }}" class="buy">
+        <input type="hidden" name="kind" value="buy">
+        <button class="btn">Купить за {{ b.price_buy|int }} ₽</button>
+      </form>
+      <form method="post" action="{{ url_for('order', book_id=b.id) }}" class="buy">
+        <input type="hidden" name="kind" value="rent">
+        <select name="days">{% for d, plan in RENT_PLANS.items() %}<option value="{{ d }}">{{ plan[0] }} — {{ rent_price(b, d) }} ₽</option>{% endfor %}</select>
+        <button class="btn ghost">Взять в аренду</button>
+      </form>
+      {% else %}<a class="btn" href="{{ url_for('login', next=request.path) }}">Войдите, чтобы купить или арендовать</a>{% endif %}
+    {% else %}<p class="muted">Сейчас книгу нельзя заказать.</p>{% endif %}
+  </div>
+</div>
+{% endblock %}

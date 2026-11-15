@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Каталог{% endblock %} · Полка</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='shop.css') }}">
+</head>
+<body class="{{ 'admin' if g.user and g.user.role=='admin' }}">
+<header>
+  <a class="logo" href="{{ url_for('catalog') }}">📚 Полка <small>книжный магазин</small></a>
+  <nav>
+    {% if g.user and g.user.role == 'admin' %}
+      <a href="{{ url_for('admin_books') }}">Книги</a>
+      <a href="{{ url_for('admin_rentals') }}">Аренды и напоминания</a>
+      <a href="{{ url_for('catalog') }}">Витрина</a>
+      <span class="badge">администратор</span>
+    {% elif g.user %}
+      <a href="{{ url_for('catalog') }}">Каталог</a>
+      <a href="{{ url_for('my_library') }}">Моя библиотека</a>
+      <a href="{{ url_for('notifications') }}">Уведомления{% if g.unread %} <b class="dot">{{ g.unread }}</b>{% endif %}</a>
+    {% else %}
+      <a href="{{ url_for('catalog') }}">Каталог</a>
+    {% endif %}
+    {% if g.user %}<a href="{{ url_for('logout') }}">Выход ({{ g.user.username }})</a>
+    {% else %}<a href="{{ url_for('login') }}">Вход</a><a class="btn" href="{{ url_for('register') }}">Регистрация</a>{% endif %}
+  </nav>
+</header>
+<main>
+  {% for m in get_flashed_messages() %}<div class="flash">{{ m }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+</body></html>

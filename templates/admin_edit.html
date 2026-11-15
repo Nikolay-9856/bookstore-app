@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="post" class="box">
+  <h1>{{ 'Редактирование книги' if b and b.id else 'Новая книга' }}</h1>
+  <div class="two"><label>Название<input name="title" required value="{{ b.title if b }}"></label>
+  <label>Автор<input name="author" required value="{{ b.author if b }}"></label></div>
+  <div class="two"><label>Категория<input name="category" required value="{{ b.category if b }}"></label>
+  <label>Год написания<input name="year" type="number" required value="{{ b.year if b }}"></label></div>
+  <label>Аннотация<textarea name="annotation" rows="4">{{ b.annotation if b }}</textarea></label>
+  <div class="two"><label>Цена покупки, ₽<input name="price_buy" type="number" min="0" step="1" required value="{{ b.price_buy|int if b }}"></label>
+  <label>Аренда на 2 недели, ₽<input name="price_rent" type="number" min="0" step="1" required value="{{ b.price_rent|int if b }}"></label></div>
+  <div class="two"><label>Экземпляров<input name="stock" type="number" min="0" required value="{{ b.stock if b else 1 }}"></label>
+  <label>Статус<select name="status">{% for k, n in STATUSES.items() %}<option value="{{ k }}" {{ 'selected' if b and b.status==k }}>{{ n }}</option>{% endfor %}</select></label></div>
+  <button class="btn">Сохранить</button> <a href="{{ url_for('admin_books') }}">отмена</a>
+</form>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="layout">
+<form class="filters box" method="get">
+  <h3>Подбор</h3>
+  <label>Поиск<input name="q" value="{{ args.q }}" placeholder="название или автор"></label>
+  <label>Категория<select name="category"><option value="">Все</option>
+    {% for c in categories %}<option {{ 'selected' if args.category==c }}>{{ c }}</option>{% endfor %}</select></label>
+  <label>Автор<select name="author"><option value="">Все</option>
+    {% for a in authors %}<option {{ 'selected' if args.author==a }}>{{ a }}</option>{% endfor %}</select></label>
+  <div class="two"><label>Год с<input name="year_from" type="number" value="{{ args.year_from }}"></label>
+  <label>по<input name="year_to" type="number" value="{{ args.year_to }}"></label></div>
+  <label>Сортировка<select name="sort">
+    {% for k, n in [('category','по категории'),('author','по автору'),('year_desc','год: новые'),('year_asc','год: старые'),('price','по цене'),('title','по названию')] %}
+    <option value="{{ k }}" {{ 'selected' if sort==k }}>{{ n }}</option>{% endfor %}</select></label>
+  <button class="btn">Показать</button> <a href="{{ url_for('catalog') }}">сбросить</a>
+</form>
+<section class="grid">
+  {% for b in books %}
+  <a class="bookcard" href="{{ url_for('book', book_id=b.id) }}">
+    <div class="cover c{{ b.id % 6 }}">{{ b.title[:1] }}</div>
+    <div class="cat">{{ b.category }} · {{ b.year }}</div>
+    <b>{{ b.title }}</b><div>{{ b.author }}</div>
+    <div class="price">{{ b.price_buy|int }} ₽ <span>аренда от {{ b.price_rent|int }} ₽</span></div>
+    <span class="st st-{{ b.status }}">{{ STATUSES[b.status] }}{% if b.stock == 0 and b.status != 'expected' %} · нет в наличии{% endif %}</span>
+  </a>
+  {% else %}<p>Ничего не найдено.</p>{% endfor %}
+</section>
+</div>
+{% endblock %}

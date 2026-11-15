@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Управление книгами{% endblock %}
+{% block content %}
+<div class="head"><h1>Управление книгами</h1><a class="btn" href="{{ url_for('admin_edit') }}">+ Добавить книгу</a></div>
+<table class="tbl">
+<tr><th>Книга</th><th>Категория / год</th><th>Цена покупки</th><th>Аренда 2 нед.</th><th>Остаток</th><th>Статус</th><th></th></tr>
+{% for b in books %}
+<tr>
+  <td><a href="{{ url_for('admin_edit', book_id=b.id) }}"><b>{{ b.title }}</b></a><br><small>{{ b.author }}</small></td>
+  <td>{{ b.category }}<br><small>{{ b.year }}</small></td>
+  <td><input class="num" form="q{{ b.id }}" name="price_buy" type="number" step="1" min="0" value="{{ b.price_buy|int }}"></td>
+  <td><input class="num" form="q{{ b.id }}" name="price_rent" type="number" step="1" min="0" value="{{ b.price_rent|int }}"></td>
+  <td><input class="num" form="q{{ b.id }}" name="stock" type="number" min="0" value="{{ b.stock }}"></td>
+  <td><select form="q{{ b.id }}" name="status">{% for k, n in STATUSES.items() %}<option value="{{ k }}" {{ 'selected' if b.status==k }}>{{ n }}</option>{% endfor %}</select></td>
+  <td class="nowrap"><form id="q{{ b.id }}" method="post" action="{{ url_for('admin_quick', book_id=b.id) }}" style="display:inline"><button class="btn small">Применить</button></form>
+    <form method="post" action="{{ url_for('admin_delete', book_id=b.id) }}" style="display:inline" onsubmit="return confirm('Удалить книгу?')"><button class="btn small danger">✕</button></form></td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Моя библиотека{% endblock %}
+{% block content %}
+<h1>Моя библиотека</h1>
+<table class="tbl"><tr><th>Книга</th><th>Тип</th><th>Цена</th><th>Оформлено</th><th>Действует до</th><th></th></tr>
+{% for o in orders %}
+<tr class="{{ 'off' if o.kind=='rent' and (o.returned or o.ends_at < now) }}">
+  <td><a href="{{ url_for('book', book_id=o.book_id) }}">{{ o.title }}</a><br><small>{{ o.author }}</small></td>
+  <td>{{ 'Покупка' if o.kind=='buy' else 'Аренда, ' ~ RENT_PLANS[o.days][0] }}</td>
+  <td>{{ o.price|int }} ₽</td><td>{{ o.started_at[:10] }}</td>
+  <td>{% if o.kind=='buy' %}бессрочно{% elif o.returned %}возвращена{% elif o.ends_at < now %}истекла {{ o.ends_at[:10] }}{% else %}{{ o.ends_at[:10] }}{% endif %}</td>
+  <td>{% if o.kind=='rent' and not o.returned and o.ends_at >= now %}<form method="post" action="{{ url_for('return_book', order_id=o.id) }}"><button class="btn small ghost">Вернуть</button></form>{% endif %}</td>
+</tr>
+{% else %}<tr><td colspan="6">Пока пусто — загляните в каталог.</td></tr>{% endfor %}
+</table>
+{% endblock %}

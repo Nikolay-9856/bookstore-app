@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="post" class="box narrow">
+  <h1>{{ 'Вход' if mode=='login' else 'Регистрация покупателя' }}</h1>
+  <label>Логин<input name="username" required></label>
+  {% if mode=='register' %}<label>E-mail (для напоминаний)<input name="email" type="email" required></label>{% endif %}
+  <label>Пароль<input name="password" type="password" required></label>
+  <button class="btn">{{ 'Войти' if mode=='login' else 'Зарегистрироваться' }}</button>
+</form>
+{% endblock %}

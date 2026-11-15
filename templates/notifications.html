@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Уведомления</h1>
+{% for n in rows %}<div class="box note {{ 'new' if not n.is_read }}"><small>{{ n.created_at[:16] }}</small><div>{{ n.text }}</div></div>
+{% else %}<p>Уведомлений нет.</p>{% endfor %}
+{% endblock %}
